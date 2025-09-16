@@ -1,4 +1,7 @@
 package com.kodilla.tictactoe.ai;
 
-public class ComputerDifficulty {
+public enum ComputerDifficulty {
+    PVC_EASY,
+    PVC_MEDIUM,
+    PVC_HARD
 }

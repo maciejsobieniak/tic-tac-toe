@@ -26,6 +26,7 @@ public class Board {
     public boolean gameNotFinished() {
         for (BoardRow row : boardRows) {
             for (Player player : row.getCols()) {
+
                 if (player == Player.NONE) {
                     return true;
                 }
@@ -34,48 +35,78 @@ public class Board {
         return false;
     }
 
-    public boolean checkWinCondition(Player player) {
-        // Check rows
-        for (BoardRow row : boardRows) {
-            if (row.getCols().stream().allMatch(p -> p == player)) {
-                return true;
-            }
-        }
+    public boolean checkWinCondition(Player player, int winLength) {
 
-        // Check columns
-        for (int col = 0; col < boardSize; col++) {
-            boolean allMatch = true;
-            for (int row = 0; row < boardSize; row++) {
-                if (boardRows.get(row).getCols().get(col) != player) {
-                    allMatch = false;
-                    break;
+        if (player == null || player == Player.NONE) return false;
+
+        if (boardSize < winLength) return false;
+
+        // Poziomo
+        for (int row = 0; row < boardSize; row++) {
+            int winPoints = 0;
+
+            for (int cols = 0; cols < boardSize; cols++) {
+                if (getPlayerAt(row, cols) == player) {
+
+                    if (++winPoints >= winLength) return true;
+                } else {
+                    winPoints = 0;
                 }
             }
-            if (allMatch) {
-                return true;
+        }
+
+        // Pionowo
+        for (int cols = 0; cols < boardSize; cols++) {
+
+            int winPoints = 0;
+
+            for (int row = 0; row < boardSize; row++) {
+
+                if (getPlayerAt(row, cols) == player) {
+
+                    if (++winPoints >= winLength) return true;
+                } else {
+                    winPoints = 0;
+                }
             }
         }
 
-        // Check diagonals
-        boolean allMatch = true;
-        for (int i = 0; i < boardSize; i++) {
-            if (boardRows.get(i).getCols().get(i) != player) {
-                allMatch = false;
-                break;
+        // Przekątne \ (w dół-w-prawo)
+        for (int startRow = 0; startRow <= boardSize - winLength; startRow++) {
+
+            for (int startCol = 0; startCol <= boardSize - winLength; startCol++) {
+
+                int winPoints = 0;
+
+                for (int i = 0; i < Math.min(boardSize - startRow, boardSize - startCol); i++) {
+
+                    if (getPlayerAt(startRow + i, startCol + i) == player) {
+
+                        if (++winPoints >= winLength) return true;
+                    } else {
+                        winPoints = 0;
+                    }
+                }
             }
-        }
-        if (allMatch) {
-            return true;
         }
 
-        allMatch = true;
-        for (int i = 0; i < boardSize; i++) {
-            if (boardRows.get(i).getCols().get(boardSize - 1 - i) != player) {
-                allMatch = false;
-                break;
+        // Przekątne / (w dół-w-lewo)
+        for (int startRow = 0; startRow <= boardSize - winLength; startRow++) {
+
+            for (int startCol = winLength - 1; startCol < boardSize; startCol++) {
+                int winPoints = 0;
+
+                for (int i = 0; i < Math.min(boardSize - startRow, startCol + 1); i++) {
+                    if (getPlayerAt(startRow + i, startCol - i) == player) {
+                        if (++winPoints >= winLength) return true;
+                    } else {
+                        winPoints = 0;
+                    }
+                }
             }
         }
-        return allMatch;
+
+        return false;
     }
 
     public boolean isMoveValid(Move move) {
@@ -102,7 +133,7 @@ public class Board {
     }
 
     public void displayBoard() {
-        System.out.println(this.toString());
+        System.out.println(this);
     }
 
     @Override
