@@ -1,36 +1,52 @@
 package com.kodilla.tictactoe.ui;
 
-import com.kodilla.tictactoe.logic.Game;
-import com.kodilla.tictactoe.logic.GameMode;
-import com.kodilla.tictactoe.logic.Move;
-import com.kodilla.tictactoe.logic.Player;
+import com.kodilla.tictactoe.logic.*;
+
+import com.kodilla.tictactoe.ai.ComputerDifficulty;
 
 import java.util.Scanner;
 
 public class UserDialogs {
 
-    public static void createMainMenu() {
-        Scanner scanner = new Scanner(System.in);
-        showMainMenu(scanner);
+    public static GameConfig getGameParameters(Scanner scanner) {
+
+        showMainMenu();
+
+        int choice = checkIfUserInputIsNumber(scanner, 1, 2);
+
+        if (choice == 1) {
+            showNewGameOptionMenu();
+            choice = checkIfUserInputIsNumber(scanner, 1, 3);
+            if (choice == 1) {
+                return showCreateNewGameDialog(scanner, GameMode.PLAYER_VS_PLAYER);
+            } else if (choice == 2) {
+                return showCreateNewGameDialog(scanner, GameMode.PLAYER_VS_COMPUTER);
+            } else {
+                showMainMenu();
+            }
+        } else {
+            showExitMessage();
+            System.exit(0);
+            return null;
+        }
+        return null;
     }
 
-    public static void showMainMenu(Scanner scanner) {
+    public static void showMainMenu() {
         System.out.println("=======================================");
         System.out.println("======= Welcome to Tic Tac Toe! =======");
         System.out.println("1. Start New Game");
         System.out.println("2. Exit");
         System.out.println("=======================================");
         System.out.print("Please select an option (1, 2): ");
-        int choice = checkIfUserInputIsNumber(scanner, 1, 2);
-
-        switch (choice) {
-            case 1: showNewGameOptionMenu(scanner); break;
-            case 2: System.out.println("Exiting the game. Goodbye!"); System.exit(0);
-        }
 
     }
 
-    public static void showNewGameOptionMenu(Scanner scanner) {
+    public static void showExitMessage() {
+        System.out.println("Exiting the game. Goodbye!");
+    }
+
+    public static void showNewGameOptionMenu() {
         System.out.println("=======================================");
         System.out.println("=========== New Game Menu =============");
         System.out.println("1. Player1 vs Player2");
@@ -38,29 +54,26 @@ public class UserDialogs {
         System.out.println("3. Back to Main Menu");
         System.out.println("=======================================");
         System.out.print("Please select an option (1, 2, 3): ");
-        int choice = checkIfUserInputIsNumber(scanner, 1, 3);
-
-        switch (choice) {
-            case 1: System.out.println("Player vs Player mode selected."); showCreateNewGameDialog(scanner, GameMode.PLAYER_VS_PLAYER); break;
-            case 2: System.out.println("Player vs Computer mode selected."); showCreateNewGameDialog(scanner, GameMode.PLAYER_VS_COMPUTER); break;
-            case 3: showMainMenu(scanner);
-        }
 
     }
 
-    public static void showCreateNewGameDialog(Scanner scanner, GameMode gameMode) {
+    public static GameConfig showCreateNewGameDialog(Scanner scanner, GameMode gameMode) {
         int numberOfPlayers = (gameMode == GameMode.PLAYER_VS_PLAYER) ? 2 : 1;
         System.out.println("Creating a new game...");
         int boardSize = showCreateBoardSizeDialog(scanner);
         String player1Name = showCreatePlayerNameDialog(scanner, 1);
         String player2Name = (numberOfPlayers == 2) ? showCreatePlayerNameDialog(scanner, 2) : "Computer";
         int winLength = showCreateWinLengthDialog(scanner);
+        String startingPlayer = showCreateStartingPlayerDialog(scanner, player1Name, player2Name);
+        ComputerDifficulty computerDifficulty = (numberOfPlayers == 1) ? showCreateComputerDifficultyDialog(scanner) : null;
         System.out.println("New game created with board size " + boardSize + "x" + boardSize);
         System.out.println("Win length set to: " + winLength);
+        System.out.println("Game Mode: " + gameMode);
+        if (gameMode == GameMode.PLAYER_VS_COMPUTER) { System.out.println("Computer Difficulty: " + computerDifficulty); }
+        System.out.println("Starting Player: " + startingPlayer);
         System.out.println("Player 1 - X: " + player1Name);
         System.out.println("Player 2 - O: " + player2Name);
-        Game game = new Game(player1Name, player2Name, boardSize, gameMode, winLength);
-        game.startNewGame();
+        return new GameConfig(scanner, player1Name, player2Name, startingPlayer, gameMode, computerDifficulty, boardSize, winLength);
     }
 
     public static int showCreateWinLengthDialog(Scanner scanner) {
@@ -68,6 +81,40 @@ public class UserDialogs {
         int winLength = checkIfUserInputIsNumber(scanner, 3, 5);
         System.out.println("Win length set to: " + winLength);
         return winLength;
+    }
+
+    public static String showCreateStartingPlayerDialog(Scanner scanner, String player1Name, String player2Name) {
+        System.out.println("Who will start first?");
+        System.out.println("1)" + player1Name + " (X)");
+        System.out.println("2)" + player2Name + " (O)");
+        System.out.print("Who will start first? (1, 2): ");
+        int choice = checkIfUserInputIsNumber(scanner, 1, 2);
+        String startingPlayer = (choice == 1) ? player1Name : player2Name;
+        System.out.println(startingPlayer + " will start first.");
+        return startingPlayer;
+    }
+
+    public static ComputerDifficulty showCreateComputerDifficultyDialog(Scanner scanner) {
+        System.out.println("Select computer difficulty level:");
+        System.out.println("1) Easy");
+        System.out.println("2) Medium");
+        System.out.println("3) Hard");
+        System.out.print("Please select an option (1, 2, 3): ");
+        int choice = checkIfUserInputIsNumber(scanner, 1, 3);
+        ComputerDifficulty difficulty = null;
+        switch (choice) {
+            case 1:
+                difficulty = ComputerDifficulty.PVC_EASY;
+                break;
+            case 2:
+                difficulty = ComputerDifficulty.PVC_MEDIUM;
+                break;
+            case 3:
+                difficulty = ComputerDifficulty.PVC_HARD;
+                break;
+        }
+        System.out.println("Computer difficulty set to: " + difficulty);
+        return difficulty;
     }
 
     public static int showCreateBoardSizeDialog(Scanner scanner) {
@@ -94,7 +141,7 @@ public class UserDialogs {
         System.out.println("Invalid move. Please try again.");
     }
 
-    public static void showAddPlayerMoveMessage(String playerName, Move move) {
+    public static void showMoveMessage(String playerName, Move move) {
         System.out.println("Player: " + " " + playerName + " " + move.getPlayer() + " moves to (" + move.getRow() + ", " + move.getCol() + ")");
     }
 
@@ -131,14 +178,28 @@ public class UserDialogs {
         }
     }
 
+    public static boolean showAskIfNewGameDialog(Scanner scanner) {
+        System.out.print("Do you want to start a new game ? (yes/no): ");
+        while (true) {
+            String input = scanner.nextLine().trim().toLowerCase();
+
+            if (input.equals("yes") || input.equals("y")) {
+                return true;
+            } else if (input.equals("no") || input.equals("n")) {
+                return false;
+            } else {
+                System.out.print("Invalid input. Please enter 'yes' or 'no': ");
+            }
+        }
+    }
+
     public static Move getMove(Scanner scanner, String playerName, Player player) {
         System.out.print(playerName + " (" + player + "), enter your move (row and column) or 'exit' to quit: ");
         while (true) {
             String input = scanner.nextLine().trim();
 
             if (input.equalsIgnoreCase("exit")) {
-                System.out.println("Exiting the game. Goodbye!");
-                System.exit(0);
+                showExitMessage();
             }
 
             String[] parts = input.split("\\s+");

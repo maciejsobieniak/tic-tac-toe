@@ -5,7 +5,7 @@ import java.util.List;
 public class Board {
 
     private final int boardSize;
-    private List<BoardRow> boardRows = new ArrayList<>();
+    private final List<BoardRow> boardRows = new ArrayList<>();
     private Player whoseMove = Player.X;
 
     public Board(int boardSize) {
@@ -23,7 +23,7 @@ public class Board {
         return boardSize;
     }
 
-    public boolean gameNotFinished() {
+    public boolean checkIfboardIsNotFull() {
         for (BoardRow row : boardRows) {
             for (Player player : row.getCols()) {
 
@@ -109,7 +109,20 @@ public class Board {
         return false;
     }
 
+    public List<Move> getEmptyPossibleMovieForComputer() {
+        List<Move> emptyPossibleMoves = new ArrayList<>();
+        for (int row = 0; row < boardSize; row++) {
+            for (int col = 0; col < boardSize; col++) {
+                if (getPlayerAt(row, col) == Player.NONE) {
+                    emptyPossibleMoves.add(new Move(row, col, Player.NONE));
+                }
+            }
+        }
+        return emptyPossibleMoves;
+    }
+
     public boolean isMoveValid(Move move) {
+        if (move == null) return false;
         int row = move.getRow();
         int col = move.getCol();
         return row >= 0 && row < boardSize && col >= 0 && col < boardSize && getPlayerAt(row, col) == Player.NONE;
@@ -124,12 +137,18 @@ public class Board {
         int col = move.getCol();
         Player player = move.getPlayer();
         boardRows.get(row).getCols().set(col, player);
-        whoseMove = (whoseMove == Player.X) ? Player.O : Player.X;
+    }
 
+    public void switchPlayer() {
+        whoseMove = (whoseMove == Player.X) ? Player.O : Player.X;
     }
 
     public Player getWhoseMove() {
         return whoseMove;
+    }
+
+    public void setWhoseMove(Player player) {
+        whoseMove = player;
     }
 
     public void displayBoard() {

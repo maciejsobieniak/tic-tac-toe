@@ -24,4 +24,8 @@ public class Move {
         return player;
     }
 
+    public Player setPlayer(Player player) {
+        return this.player = player;
+    }
+
 }

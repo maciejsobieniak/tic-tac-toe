@@ -7,83 +7,64 @@ import com.kodilla.tictactoe.ui.UserDialogs;
 
 public class Game {
 
-    private final String player1Name;
-    private final String player2Name;
-    private final int boardSize;
-    private final GameMode gameMode;
-    private final int winLength;
+    private final GameConfig gameConfig;
 
-    public Game(String player1Name, String player2Name, int boardSize, GameMode gameMode, int winLength) {
+    public Game(GameConfig gameConfig) {
 
-        this.player1Name = player1Name;
-        this.player2Name = player2Name;
-        this.boardSize = boardSize;
-        this.gameMode = gameMode;
-        this.winLength = winLength;
+        this.gameConfig = gameConfig;
     }
 
     public void startNewGame() {
 
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Starting a new game with board size " + boardSize + "x" + boardSize);
-        System.out.println("Player 1: " + player1Name + " (X)");
-        System.out.println("Player 2: " + player2Name + " (O)");
-        Board board = new Board(boardSize);
+        Scanner scanner = gameConfig.getScanner();
+        Board board = new Board(gameConfig.getBoardSize());
+        board.setWhoseMove(gameConfig.getStartingPlayer());
         board.displayBoard();
 
-        while (board.gameNotFinished()) {
-            if (gameMode == GameMode.PLAYER_VS_COMPUTER && board.getWhoseMove() == Player.O) {
-                Move computerMove = ComputerMove.getComputerMove(board);
 
-                if (computerMove != null && board.isMoveValid(computerMove)) {
-                    UserDialogs.showAddComputerMoveMessage(computerMove);
-                    board.setPlayerAt(computerMove);
-                    board.displayBoard();
-
-                    if (board.checkWinCondition(computerMove.getPlayer(), winLength)) {
-                        UserDialogs.showWinMessage(getPlayerName(computerMove.getPlayer()));
-                        break;
-                    } else if (!board.gameNotFinished()) {
-                        UserDialogs.showDrawMessage();
-                        board.displayBoard();
-                        break;
+        while (board.checkIfboardIsNotFull()) {
+            Move move;
+            do {
+                if (checkIfItIsComputerTurn(board)) {
+                    move = ComputerMove.getComputerMove(board, gameConfig.getComputerDifficulty(), gameConfig.getWinLength());
+                } else {
+                    move = UserDialogs.getMove(scanner, getPlayerName(board.getWhoseMove()), board.getWhoseMove());
+                    if (!board.isMoveValid(move)) {
+                        UserDialogs.showInvalidMoveMessage();
                     }
-                    continue;
                 }
-            }
-
-            Move move = UserDialogs.getMove(scanner, getPlayerName(board.getWhoseMove()), board.getWhoseMove());
-
-            if (move != null && board.isMoveValid(move)) {
-                UserDialogs.showAddPlayerMoveMessage(getPlayerName(board.getWhoseMove()), move);
-                board.setPlayerAt(move);
-                board.displayBoard();
-
-                if (board.checkWinCondition(move.getPlayer(), winLength)) {
-                    UserDialogs.showWinMessage(getPlayerName(move.getPlayer()));
-                    break;
-                } else if (!board.gameNotFinished()) {
-                    UserDialogs.showDrawMessage();
-                    board.displayBoard();
-                    break;
-                }
-                continue;
-            } else {
-                UserDialogs.showInvalidMoveMessage();
-                continue;
+            } while (!board.isMoveValid(move));
+            if (makeMove(board, move)) {
+                break;
             }
         }
 
-        if(UserDialogs.showAskReaplyGameDialog(scanner)) {;
-            startNewGame();
-        } else {
-            UserDialogs.showMainMenu(scanner);
-        }
+    }
 
+    private boolean makeMove(Board board, Move move) {
+        UserDialogs.showMoveMessage(getPlayerName(board.getWhoseMove()), move);
+        board.setPlayerAt(move);
+        board.switchPlayer();
+        board.displayBoard();
+
+        if (board.checkWinCondition(move.getPlayer(), gameConfig.getWinLength())) {
+            UserDialogs.showWinMessage(getPlayerName(move.getPlayer()));
+            return true;
+        } else if (!board.checkIfboardIsNotFull()) {
+            UserDialogs.showDrawMessage();
+            board.displayBoard();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean checkIfItIsComputerTurn(Board board) {
+        return gameConfig.getGameMode() == GameMode.PLAYER_VS_COMPUTER && board.getWhoseMove() == Player.O;
     }
 
     public String getPlayerName(Player player) {
-
-        return (player == Player.X) ? player1Name : player2Name;
+        return (player == Player.X) ? gameConfig.getPlayer1Name() : gameConfig.getPlayer2Name();
     }
+
+
 }
