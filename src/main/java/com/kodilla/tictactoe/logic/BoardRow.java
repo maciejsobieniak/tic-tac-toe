@@ -1,6 +1,5 @@
 package com.kodilla.tictactoe.logic;
 
-
 import java.util.List;
 import java.util.ArrayList;
 

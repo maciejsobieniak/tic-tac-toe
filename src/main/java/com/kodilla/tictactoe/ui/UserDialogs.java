@@ -8,19 +8,21 @@ import java.util.Scanner;
 
 public class UserDialogs {
 
-    public static GameConfig getGameParameters(Scanner scanner) {
+    public static Scanner scanner = new Scanner(System.in);
+
+    public static GameConfig getGameParameters() {
 
         showMainMenu();
 
-        int choice = checkIfUserInputIsNumber(scanner, 1, 2);
+        int choice = checkIfUserInputIsNumber(1, 2);
 
         if (choice == 1) {
             showNewGameOptionMenu();
-            choice = checkIfUserInputIsNumber(scanner, 1, 3);
+            choice = checkIfUserInputIsNumber(1, 3);
             if (choice == 1) {
-                return showCreateNewGameDialog(scanner, GameMode.PLAYER_VS_PLAYER);
+                return showCreateNewGameDialog(GameMode.PLAYER_VS_PLAYER);
             } else if (choice == 2) {
-                return showCreateNewGameDialog(scanner, GameMode.PLAYER_VS_COMPUTER);
+                return showCreateNewGameDialog(GameMode.PLAYER_VS_COMPUTER);
             } else {
                 showMainMenu();
             }
@@ -58,15 +60,15 @@ public class UserDialogs {
 
     }
 
-    public static GameConfig showCreateNewGameDialog(Scanner scanner, GameMode gameMode) {
+    public static GameConfig showCreateNewGameDialog(GameMode gameMode) {
         int numberOfPlayers = (gameMode == GameMode.PLAYER_VS_PLAYER) ? 2 : 1;
         System.out.println("Creating a new game...");
-        int boardSize = showCreateBoardSizeDialog(scanner);
-        String player1Name = showCreatePlayerNameDialog(scanner, 1);
-        String player2Name = (numberOfPlayers == 2) ? showCreatePlayerNameDialog(scanner, 2) : "Computer";
-        int winLength = showCreateWinLengthDialog(scanner);
-        String startingPlayer = showCreateStartingPlayerDialog(scanner, player1Name, player2Name);
-        ComputerDifficulty computerDifficulty = (numberOfPlayers == 1) ? showCreateComputerDifficultyDialog(scanner) : null;
+        int boardSize = showCreateBoardSizeDialog();
+        String player1Name = showCreatePlayerNameDialog(1);
+        String player2Name = (numberOfPlayers == 2) ? showCreatePlayerNameDialog(2) : "Computer";
+        int winLength = showCreateWinLengthDialog();
+        String startingPlayer = showCreateStartingPlayerDialog(player1Name, player2Name);
+        ComputerDifficulty computerDifficulty = (numberOfPlayers == 1) ? showCreateComputerDifficultyDialog() : null;
         System.out.println("New game created with board size " + boardSize + "x" + boardSize);
         System.out.println("Win length set to: " + winLength);
         System.out.println("Game Mode: " + gameMode);
@@ -74,34 +76,34 @@ public class UserDialogs {
         System.out.println("Starting Player: " + startingPlayer);
         System.out.println("Player 1 - X: " + player1Name);
         System.out.println("Player 2 - O: " + player2Name);
-        return new GameConfig(scanner, player1Name, player2Name, startingPlayer, gameMode, computerDifficulty, boardSize, winLength);
+        return new GameConfig(player1Name, player2Name, startingPlayer, gameMode, computerDifficulty, boardSize, winLength);
     }
 
-    public static int showCreateWinLengthDialog(Scanner scanner) {
+    public static int showCreateWinLengthDialog() {
         System.out.print("Enter win length (3-5): ");
-        int winLength = checkIfUserInputIsNumber(scanner, 3, 5);
+        int winLength = checkIfUserInputIsNumber(3, 5);
         System.out.println("Win length set to: " + winLength);
         return winLength;
     }
 
-    public static String showCreateStartingPlayerDialog(Scanner scanner, String player1Name, String player2Name) {
+    public static String showCreateStartingPlayerDialog(String player1Name, String player2Name) {
         System.out.println("Who will start first?");
         System.out.println("1)" + player1Name + " (X)");
         System.out.println("2)" + player2Name + " (O)");
         System.out.print("Who will start first? (1, 2): ");
-        int choice = checkIfUserInputIsNumber(scanner, 1, 2);
+        int choice = checkIfUserInputIsNumber(1, 2);
         String startingPlayer = (choice == 1) ? player1Name : player2Name;
         System.out.println(startingPlayer + " will start first.");
         return startingPlayer;
     }
 
-    public static ComputerDifficulty showCreateComputerDifficultyDialog(Scanner scanner) {
+    public static ComputerDifficulty showCreateComputerDifficultyDialog() {
         System.out.println("Select computer difficulty level:");
         System.out.println("1) Easy");
         System.out.println("2) Medium");
         System.out.println("3) Hard");
         System.out.print("Please select an option (1, 2, 3): ");
-        int choice = checkIfUserInputIsNumber(scanner, 1, 3);
+        int choice = checkIfUserInputIsNumber(1, 3);
         ComputerDifficulty difficulty = null;
         switch (choice) {
             case 1:
@@ -118,14 +120,14 @@ public class UserDialogs {
         return difficulty;
     }
 
-    public static int showCreateBoardSizeDialog(Scanner scanner) {
+    public static int showCreateBoardSizeDialog() {
         System.out.print("Enter board size (3-10): ");
-        int boardSize = checkIfUserInputIsNumber(scanner, 3, 10);
+        int boardSize = checkIfUserInputIsNumber(3, 10);
         System.out.println("Board size set to: " + boardSize + "x" + boardSize);
         return boardSize;
     }
 
-    public static String showCreatePlayerNameDialog(Scanner scanner, int playerNumber) {
+    public static String showCreatePlayerNameDialog(int playerNumber) {
         System.out.print("Enter name for Player " + playerNumber + ": ");
         String playerName = scanner.nextLine().trim();
 
@@ -164,7 +166,7 @@ public class UserDialogs {
         System.out.println("=======================================");
     }
 
-    public static boolean showAskReaplyGameDialog(Scanner scanner) {
+    public static boolean showAskReaplyGameDialog() {
         System.out.print("Do you want to repeat game ? (yes/no): ");
         while (true) {
             String input = scanner.nextLine().trim().toLowerCase();
@@ -179,7 +181,7 @@ public class UserDialogs {
         }
     }
 
-    public static boolean showAskIfNewGameDialog(Scanner scanner) {
+    public static boolean showAskIfNewGameDialog() {
         System.out.print("Do you want to start a new game ? (yes/no): ");
         while (true) {
             String input = scanner.nextLine().trim().toLowerCase();
@@ -194,7 +196,7 @@ public class UserDialogs {
         }
     }
 
-    public static boolean showAskIfSaveGameDialog(Scanner scanner) {
+    public static boolean showAskIfSaveGameDialog() {
         System.out.print("Do you want to save the current game? (y/n): ");
         while (true) {
             String input = scanner.nextLine().trim().toLowerCase();
@@ -209,7 +211,7 @@ public class UserDialogs {
         }
     }
 
-    public static Move getMove(Scanner scanner, String playerName, Player player) {
+    public static Move getMove(String playerName, Player player) {
         System.out.print(playerName + " (" + player + "), enter your move (row and column) or 'exit' to quit: ");
         while (true) {
             String input = scanner.nextLine().trim();
@@ -237,7 +239,7 @@ public class UserDialogs {
         }
     }
 
-    public static int checkIfUserInputIsNumber(Scanner scanner, int min, int max) {
+    public static int checkIfUserInputIsNumber(int min, int max) {
         while (true) {
             String inputString = scanner.nextLine().trim();
 

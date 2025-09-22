@@ -9,15 +9,15 @@ import java.util.Scanner;
 public class TicTacTocConsoleRunner {
 
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        GameConfig gameConfig = UserDialogs.getGameParameters(sc);
+
+        GameConfig gameConfig = UserDialogs.getGameParameters();
         Game game = new Game(gameConfig);
         game.startNewGame();
         while (true) {
-            if (UserDialogs.showAskReaplyGameDialog(sc)) {
+            if (UserDialogs.showAskReaplyGameDialog()) {
                 game.startNewGame();
-            } else if (UserDialogs.showAskIfNewGameDialog(sc)) {
-                gameConfig = UserDialogs.getGameParameters(sc);
+            } else if (UserDialogs.showAskIfNewGameDialog()) {
+                gameConfig = UserDialogs.getGameParameters();
                 game = new Game(gameConfig);
                 game.startNewGame();
             } else {

@@ -28,10 +28,10 @@ public class Game {
                 if (checkIfItIsComputerTurn(board)) {
                     move = ComputerMove.getComputerMove(board, gameConfig.getComputerDifficulty(), gameConfig.getWinLength());
                 } else {
-                    if (checkIfwantToSaveGame(scanner)) {
+                    if (checkIfwantToSaveGame()) {
                         saveCurrentGame(board);
                     }
-                    move = UserDialogs.getMove(scanner, getPlayerName(board.getWhoseMove()), board.getWhoseMove());
+                    move = UserDialogs.getMove(getPlayerName(board.getWhoseMove()), board.getWhoseMove());
                     if (!board.isMoveValid(move)) {
                         UserDialogs.showInvalidMoveMessage();
                     }
@@ -65,8 +65,8 @@ public class Game {
         return UserDialogs.showAskIfLoadGameDialog(scanner);
     }*/
 
-    public boolean checkIfwantToSaveGame(Scanner scanner) {
-        return UserDialogs.showAskIfSaveGameDialog(scanner);
+    public boolean checkIfwantToSaveGame() {
+        return UserDialogs.showAskIfSaveGameDialog();
     }
 
     public boolean checkIfItIsComputerTurn(Board board) {
