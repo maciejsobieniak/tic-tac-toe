@@ -15,7 +15,8 @@ public class GameConfig {
     private final int boardSize;
     private final int winLength;
 
-    public GameConfig(Scanner scanner, String player1Name, String player2Name, String startingPlayer, GameMode gameMode, ComputerDifficulty computerDifficulty, int boardSize, int winLength) {
+    public GameConfig(Scanner scanner, String player1Name, String player2Name, String startingPlayer, GameMode gameMode,
+                      ComputerDifficulty computerDifficulty, int boardSize, int winLength) {
         this.scanner = scanner;
         this.player1Name = player1Name;
         this.player2Name = player2Name;

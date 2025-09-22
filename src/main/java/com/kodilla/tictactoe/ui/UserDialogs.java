@@ -44,6 +44,7 @@ public class UserDialogs {
 
     public static void showExitMessage() {
         System.out.println("Exiting the game. Goodbye!");
+
     }
 
     public static void showNewGameOptionMenu() {
@@ -193,6 +194,21 @@ public class UserDialogs {
         }
     }
 
+    public static boolean showAskIfSaveGameDialog(Scanner scanner) {
+        System.out.print("Do you want to save the current game? (y/n): ");
+        while (true) {
+            String input = scanner.nextLine().trim().toLowerCase();
+
+            if (input.equals("yes") || input.equals("y")) {
+                return true;
+            } else if (input.equals("no") || input.equals("n")) {
+                return false;
+            } else {
+                System.out.print("Invalid input. Please enter 'yes' or 'no': ");
+            }
+        }
+    }
+
     public static Move getMove(Scanner scanner, String playerName, Player player) {
         System.out.print(playerName + " (" + player + "), enter your move (row and column) or 'exit' to quit: ");
         while (true) {
@@ -200,6 +216,7 @@ public class UserDialogs {
 
             if (input.equalsIgnoreCase("exit")) {
                 showExitMessage();
+                System.exit(0);
             }
 
             String[] parts = input.split("\\s+");

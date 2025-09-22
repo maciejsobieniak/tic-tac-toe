@@ -114,7 +114,7 @@ public class Board {
         for (int row = 0; row < boardSize; row++) {
             for (int col = 0; col < boardSize; col++) {
                 if (getPlayerAt(row, col) == Player.NONE) {
-                    emptyPossibleMoves.add(new Move(row, col, Player.NONE));
+                    emptyPossibleMoves.add(new Move(row, col, Player.O));
                 }
             }
         }
@@ -153,6 +153,18 @@ public class Board {
 
     public void displayBoard() {
         System.out.println(this);
+    }
+
+    public List<List<Player>> saveBoard(Board board) {
+        List<List<Player>> result = new ArrayList<>();
+        for (int row = 0; row < board.getBoardSize(); row++) {
+            List<Player> rowList = new ArrayList<>();
+            for (int col = 0; col < board.getBoardSize(); col++) {
+                rowList.add(board.getPlayerAt(row, col));
+            }
+            result.add(rowList);
+        }
+        return result;
     }
 
     @Override
