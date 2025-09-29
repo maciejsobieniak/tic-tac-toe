@@ -35,7 +35,7 @@ public class SaveGameEngine {
                     gameConfig.getWinLength()
             );
             SaveGameEngine.saveToFile(saveGame, "save_game.dat");
-            UserDialogs.showLoadGameSuccessMessage();
+            UserDialogs.showGameSavedSuccessMessage();
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }

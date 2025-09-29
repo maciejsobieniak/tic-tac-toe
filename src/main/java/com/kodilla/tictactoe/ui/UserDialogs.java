@@ -5,6 +5,7 @@ import com.kodilla.tictactoe.logic.*;
 import com.kodilla.tictactoe.ai.ComputerDifficulty;
 import com.kodilla.tictactoe.services.SaveGame;
 import com.kodilla.tictactoe.services.LoadGameEngine;
+import javafx.scene.control.Label;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -249,6 +250,43 @@ public class UserDialogs {
     public static void showErrorLoadGameConfigMessage() {
         System.out.println("Game configuration is missing. Cannot start the game.");
     }
+
+    public static void showNewGameFxMessage(String playerName, Player player, Label messageLabel) {
+        messageLabel.setText("Player: " + " " + playerName + " - " + player + " it's your move.");
+    }
+
+    public static void showInvalidMoveFxMessage(Label messageLabel) {
+        messageLabel.setText("Invalid move. Please try again.");
+    }
+
+    public static void showWhoseMoveFxMessage(String playerName, Player player, Label messageLabel) {
+        messageLabel.setText("Player: " + " " + playerName + " - " + player + " it's your move.");
+    }
+
+    public static void showInvalidInputFxMessage(int boardSize, Label messageLabel) {
+        messageLabel.setText("Invalid input! Please enter valid integers from range 0 - " + (boardSize - 1));
+    }
+
+    public static void showInvalidInputIntegerFxMessage(Label messageLabel) {
+        messageLabel.setText("Invalid input! Please enter valid integers.");
+    }
+
+    public static void showDrawFxMessage(Label messageLabel) {
+        messageLabel.setText("The game is a draw!");
+    }
+
+    public static void showWinFxMessage(String winnerName, Player player, Label messageLabel) {
+        messageLabel.setText("Congratulations " + winnerName + " - " + player + "! You have won the game!");
+    }
+
+    public static void showLoadGameFxMessage(String playerName, Player player, Label messageLabel) {
+        messageLabel.setText("Game loaded successfully. Player: " + " " + playerName + " - " + player + " it's your move.");
+    }
+
+    public static void showErrorLoadGameFxMessage(Label messageLabel) {
+        messageLabel.setText("Save file not found or corrupted. Starting new game.");
+    }
+
 
     public static Move getMove(String playerName, Player player) {
         System.out.print(playerName + " (" + player + "), enter your move (row and column) or 'exit' to quit: ");

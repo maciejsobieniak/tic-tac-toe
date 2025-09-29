@@ -35,20 +35,20 @@ public class GameFx {
                 board = LoadGameEngine.loadBoard(loadedGame.getBoard());
                 board.setWhoseMove(loadedGame.getWhoseMove());
                 gameConfig.setGameLoadedStatusToFalse();
-                updateInfoGameLabel.setText("Game is loaded! Player move: " + board.getWhoseMove());
+                UserDialogs.showLoadGameFxMessage(getPlayerName(board.getWhoseMove()), board.getWhoseMove(), updateInfoGameLabel);
                 boardView.enableInput();
                 boardView.drawBoard(board);
                 if (checkIfItIsComputerTurn()) {
                     computerMove();
                 }
             } catch (Exception e) {
-                updateInfoGameLabel.setText("Save file not found or corrupted. Starting new game.");
+                UserDialogs.showErrorLoadGameFxMessage(updateInfoGameLabel);
                 gameConfig.setGameLoadedStatusToFalse();
             }
         } else {
             boardView.enableInput();
             boardView.drawBoard(board);
-            updateInfoGameLabel.setText("New Game! Player move: " + board.getWhoseMove());
+            UserDialogs.showNewGameFxMessage(getPlayerName(board.getWhoseMove()), board.getWhoseMove(), updateInfoGameLabel);
             if (checkIfItIsComputerTurn()) {
                 computerMove();
             }
@@ -59,7 +59,7 @@ public class GameFx {
         Player current = board.getWhoseMove();
         Move move = new Move(row, col, current);
         if (!board.isMoveValid(move)) {
-            updateInfoGameLabel.setText("Invalid move. Please try again.");
+            UserDialogs.showInvalidMoveFxMessage(updateInfoGameLabel);
         } else {
             makeMove(move);
         }
@@ -78,14 +78,14 @@ public class GameFx {
         board.setPlayerAt(move);
         boardView.drawBoard(board);
         if (board.checkWinCondition(move.getPlayer(), gameConfig.getWinLength())) {
-            updateInfoGameLabel.setText("Win: " + move.getPlayer());
+            UserDialogs.showWinFxMessage(getPlayerName(board.getWhoseMove()), board.getWhoseMove(), updateInfoGameLabel);
             boardView.disableInput();
         } else if (!board.checkIfboardIsNotFull()) {
-            updateInfoGameLabel.setText("Draw!");
+            UserDialogs.showDrawFxMessage(updateInfoGameLabel);
             boardView.disableInput();
         } else {
             board.switchPlayer();
-            updateInfoGameLabel.setText("Player move: " + board.getWhoseMove());
+            UserDialogs.showWhoseMoveFxMessage(getPlayerName(board.getWhoseMove()), board.getWhoseMove(), updateInfoGameLabel);
             if (checkIfItIsComputerTurn()) {
                 computerMove();
             }
@@ -97,12 +97,12 @@ public class GameFx {
             int row = Integer.parseInt(rowField);
             int col = Integer.parseInt(colField);
             if (row < 0 || row >= gameConfig.getBoardSize() || col < 0 || col >= gameConfig.getBoardSize()) {
-                updateInfoGameLabel.setText("Invalid move! Please enter valid integers from range 0 - " + (gameConfig.getBoardSize() - 1));
+                UserDialogs.showInvalidInputFxMessage(gameConfig.getBoardSize(), updateInfoGameLabel);
             } else {
                 playerMove(row, col);
             }
         } catch (NumberFormatException ex) {
-            updateInfoGameLabel.setText("Invalid move! Please enter valid integers.");
+            UserDialogs.showInvalidInputIntegerFxMessage(updateInfoGameLabel);
         }
     }
 
@@ -112,5 +112,9 @@ public class GameFx {
 
     public GameConfig getGameConfig() {
         return gameConfig;
+    }
+
+    public String getPlayerName(Player player) {
+        return (player == Player.X) ? gameConfig.getPlayer1Name() : gameConfig.getPlayer2Name();
     }
 }
