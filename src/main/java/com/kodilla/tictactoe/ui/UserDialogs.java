@@ -3,7 +3,10 @@ package com.kodilla.tictactoe.ui;
 import com.kodilla.tictactoe.logic.*;
 
 import com.kodilla.tictactoe.ai.ComputerDifficulty;
+import com.kodilla.tictactoe.services.SaveGame;
+import com.kodilla.tictactoe.services.LoadGameEngine;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class UserDialogs {
@@ -14,7 +17,7 @@ public class UserDialogs {
 
         showMainMenu();
 
-        int choice = checkIfUserInputIsNumber(1, 2);
+        int choice = checkIfUserInputIsNumber(1, 3);
 
         if (choice == 1) {
             showNewGameOptionMenu();
@@ -26,6 +29,8 @@ public class UserDialogs {
             } else {
                 showMainMenu();
             }
+        } else if (choice == 2) {
+            return showLoadGameDialog();
         } else {
             showExitMessage();
             System.exit(0);
@@ -38,9 +43,10 @@ public class UserDialogs {
         System.out.println("=======================================");
         System.out.println("======= Welcome to Tic Tac Toe! =======");
         System.out.println("1. Start New Game");
-        System.out.println("2. Exit");
+        System.out.println("2. Load Game");
+        System.out.println("3. Exit");
         System.out.println("=======================================");
-        System.out.print("Please select an option (1, 2): ");
+        System.out.print("Please select an option (1, 2, 3): ");
 
     }
 
@@ -76,7 +82,7 @@ public class UserDialogs {
         System.out.println("Starting Player: " + startingPlayer);
         System.out.println("Player 1 - X: " + player1Name);
         System.out.println("Player 2 - O: " + player2Name);
-        return new GameConfig(player1Name, player2Name, startingPlayer, gameMode, computerDifficulty, boardSize, winLength);
+        return new GameConfig(false, player1Name, player2Name, startingPlayer, gameMode, computerDifficulty, boardSize, winLength);
     }
 
     public static int showCreateWinLengthDialog() {
@@ -138,6 +144,23 @@ public class UserDialogs {
 
         System.out.println("Player " + playerNumber + " name set to: " + playerName);
         return playerName;
+    }
+
+    public static GameConfig showLoadGameDialog() {
+        System.out.println("Loading a saved game...");
+        try {
+            SaveGame loadGameFromSave = LoadGameEngine.loadGameFromFile("save_game.dat");
+            return new GameConfig(true, loadGameFromSave.getPlayer1Name(), loadGameFromSave.getPlayer2Name(),
+                    loadGameFromSave.getStartingPlayerName(), loadGameFromSave.getGameMode(), loadGameFromSave.getComputerDifficulty(),
+                    loadGameFromSave.getBoardSize(), loadGameFromSave.getWinLength());
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Failed to load the saved game. Starting a new game instead.");
+            return getGameParameters();
+        }
+    }
+
+    public static void showLoadGameSuccessMessage() {
+        System.out.println("Game loaded successfully.");
     }
 
     public static void showInvalidMoveMessage() {
@@ -209,6 +232,22 @@ public class UserDialogs {
                 System.out.print("Invalid input. Please enter 'yes' or 'no': ");
             }
         }
+    }
+
+    public static void showGameSavedMessageErrorBoardOrGameConfig() {
+        System.out.println("Game saved successfully.");
+    }
+
+    public static void showGameSavedMessageErrorBoardIsFull() {
+        System.out.println("Game board is full. Cannot save the game.");
+    }
+
+    public static void showGameSavedSuccessMessage() {
+        System.out.println("Game saved successfully.");
+    }
+
+    public static void showErrorLoadGameConfigMessage() {
+        System.out.println("Game configuration is missing. Cannot start the game.");
     }
 
     public static Move getMove(String playerName, Player player) {

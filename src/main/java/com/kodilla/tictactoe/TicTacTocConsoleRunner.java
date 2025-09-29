@@ -4,13 +4,16 @@ import com.kodilla.tictactoe.logic.Game;
 import com.kodilla.tictactoe.logic.GameConfig;
 import com.kodilla.tictactoe.ui.UserDialogs;
 
-import java.util.Scanner;
-
 public class TicTacTocConsoleRunner {
 
     public static void main(String[] args) {
 
         GameConfig gameConfig = UserDialogs.getGameParameters();
+        if (gameConfig == null) {
+            UserDialogs.showErrorLoadGameConfigMessage();
+            return;
+        }
+
         Game game = new Game(gameConfig);
         game.startNewGame();
         while (true) {

@@ -1,9 +1,10 @@
-package com.kodilla.tictactoe.logic;
+package com.kodilla.tictactoe.services;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 import com.kodilla.tictactoe.ai.ComputerDifficulty;
+import com.kodilla.tictactoe.logic.GameMode;
+import com.kodilla.tictactoe.logic.Player;
 
 public class SaveGame implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -11,31 +12,23 @@ public class SaveGame implements Serializable {
     private final Player whoseMove;
     private final String player1Name;
     private final String player2Name;
+    private final String startingPlayer;
     private final GameMode gameMode;
     private final ComputerDifficulty computerDifficulty;
     private final int boardSize;
     private final int winLength;
 
-    public SaveGame(List<List<Player>> board, Player whoseMove, String player1Name, String player2Name, GameMode gameMode, ComputerDifficulty computerDifficulty, int boardSize, int winLength) {
+    public SaveGame(List<List<Player>> board, Player whoseMove, String player1Name, String player2Name, String startingPlayer,
+                    GameMode gameMode, ComputerDifficulty computerDifficulty, int boardSize, int winLength) {
         this.board = board;
         this.whoseMove = whoseMove;
         this.player1Name = player1Name;
         this.player2Name = player2Name;
+        this.startingPlayer = startingPlayer;
         this.gameMode = gameMode;
         this.computerDifficulty = computerDifficulty;
         this.boardSize = boardSize;
         this.winLength = winLength;
-    }
-
-    public void saveToFile(SaveGame saveGame, String filename) throws IOException {
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename));
-        oos.writeObject(saveGame);
-        oos.close();
-    }
-
-    public SaveGame loadFromFile(String filename) throws IOException, ClassNotFoundException {
-        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename));
-        return (SaveGame) ois.readObject();
     }
 
     public List<List<Player>> getBoard() {
@@ -50,6 +43,11 @@ public class SaveGame implements Serializable {
     public String getPlayer2Name() {
         return player2Name;
     }
+
+    public String getStartingPlayerName() {
+        return startingPlayer;
+    }
+
     public GameMode getGameMode() {
         return gameMode;
     }
@@ -61,19 +59,5 @@ public class SaveGame implements Serializable {
     }
     public int getWinLength() {
         return winLength;
-    }
-
-    public Board loadBoard(List<List<Player>> boardList) {
-        int size = boardList.size();
-        Board board = new Board(size);
-        for (int row = 0; row < size; row++) {
-            for (int col = 0; col < size; col++) {
-                Player player = boardList.get(row).get(col);
-                if (player != Player.NONE) {
-                    board.setPlayerAt(new Move(row, col, player));
-                }
-            }
-        }
-        return board;
     }
 }

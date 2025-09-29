@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 public class GameConfig {
 
+    private boolean gameLoadedStatus;
     private final String player1Name;
     private final String player2Name;
     private final String startingPlayer;
@@ -14,9 +15,10 @@ public class GameConfig {
     private final int boardSize;
     private final int winLength;
 
-    public GameConfig(String player1Name, String player2Name, String startingPlayer, GameMode gameMode,
+    public GameConfig(boolean gameLoadedStatus, String player1Name, String player2Name, String startingPlayer, GameMode gameMode,
                       ComputerDifficulty computerDifficulty, int boardSize, int winLength) {
 
+        this.gameLoadedStatus = gameLoadedStatus;
         this.player1Name = player1Name;
         this.player2Name = player2Name;
         this.startingPlayer = startingPlayer;
@@ -24,6 +26,10 @@ public class GameConfig {
         this.computerDifficulty = computerDifficulty;
         this.boardSize = boardSize;
         this.winLength = winLength;
+    }
+
+    public boolean gameLoadedStatus() {
+        return gameLoadedStatus;
     }
 
     public String getPlayer1Name() {
@@ -40,6 +46,10 @@ public class GameConfig {
         }
     }
 
+    public String getStartingPlayerName() {
+        return startingPlayer;
+    }
+
     public GameMode getGameMode() {
         return gameMode;
     }
@@ -54,5 +64,9 @@ public class GameConfig {
 
     public int getWinLength() {
         return winLength;
+    }
+
+    public void setGameLoadedStatusToFalse() {
+        this.gameLoadedStatus = false;
     }
 }

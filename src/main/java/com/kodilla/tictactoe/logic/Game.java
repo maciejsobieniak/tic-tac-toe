@@ -1,8 +1,9 @@
 package com.kodilla.tictactoe.logic;
 
-import java.util.Scanner;
-
 import com.kodilla.tictactoe.ai.ComputerMove;
+import com.kodilla.tictactoe.services.SaveGame;
+import com.kodilla.tictactoe.services.LoadGameEngine;
+import com.kodilla.tictactoe.services.SaveGameEngine;
 import com.kodilla.tictactoe.ui.UserDialogs;
 
 public class Game {
@@ -16,20 +17,46 @@ public class Game {
 
     public void startNewGame() {
 
-        Scanner scanner = gameConfig.getScanner();
+        if (gameConfig == null) {
+            UserDialogs.showErrorLoadGameConfigMessage();
+            return;
+        }
+
         Board board = new Board(gameConfig.getBoardSize());
         board.setWhoseMove(gameConfig.getStartingPlayer());
-        board.displayBoard();
 
+        if (gameConfig.gameLoadedStatus()) {
+            try {
+                SaveGame loadedGame = LoadGameEngine.loadGameFromFile("save_game.dat");
+                if (loadedGame == null) {
+                    UserDialogs.showErrorLoadGameConfigMessage();
+                    return;
+                }
+                board = LoadGameEngine.loadBoard(loadedGame.getBoard());
+                board.setWhoseMove(loadedGame.getWhoseMove());
+                gameConfig.setGameLoadedStatusToFalse();
+                board.displayBoard();
+                play(board);
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+        } else {
+            board.displayBoard();
+            play(board);
+        }
 
+    }
+
+    public void play(Board board) {
         while (board.checkIfboardIsNotFull()) {
             Move move;
             do {
                 if (checkIfItIsComputerTurn(board)) {
-                    move = ComputerMove.getComputerMove(board, gameConfig.getComputerDifficulty(), gameConfig.getWinLength());
+                    move = ComputerMove.getComputerMove(board, gameConfig.getComputerDifficulty(),
+                            gameConfig.getWinLength());
                 } else {
-                    if (checkIfwantToSaveGame()) {
-                        saveCurrentGame(board);
+                    if (UserDialogs.showAskIfSaveGameDialog()) {
+                        SaveGameEngine.saveGame(board, gameConfig);
                     }
                     move = UserDialogs.getMove(getPlayerName(board.getWhoseMove()), board.getWhoseMove());
                     if (!board.isMoveValid(move)) {
@@ -41,7 +68,6 @@ public class Game {
                 break;
             }
         }
-
     }
 
     private boolean makeMove(Board board, Move move) {
@@ -61,14 +87,6 @@ public class Game {
         return false;
     }
 
-    /*public boolean checkIfwantToLoadGame(Scanner scanner) {
-        return UserDialogs.showAskIfLoadGameDialog(scanner);
-    }*/
-
-    public boolean checkIfwantToSaveGame() {
-        return UserDialogs.showAskIfSaveGameDialog();
-    }
-
     public boolean checkIfItIsComputerTurn(Board board) {
         return gameConfig.getGameMode() == GameMode.PLAYER_VS_COMPUTER && board.getWhoseMove() == Player.O;
     }
@@ -76,25 +94,5 @@ public class Game {
     public String getPlayerName(Player player) {
         return (player == Player.X) ? gameConfig.getPlayer1Name() : gameConfig.getPlayer2Name();
     }
-
-    public void saveCurrentGame(Board board) {
-        try {
-            SaveGame saveGame = new SaveGame(
-                    board.saveBoard(board),
-                    board.getWhoseMove(),
-                    gameConfig.getPlayer1Name(),
-                    gameConfig.getPlayer2Name(),
-                    gameConfig.getGameMode(),
-                    gameConfig.getComputerDifficulty(),
-                    gameConfig.getBoardSize(),
-                    gameConfig.getWinLength()
-            );
-            saveGame.saveToFile(saveGame, getPlayerName(board.getWhoseMove()) + ".dat");
-            System.out.println("Game saved successfully.");
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-    }
-
 
 }
