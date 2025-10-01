@@ -72,4 +72,126 @@ public class BoardTestSuite {
         // Then
         assertFalse(result);
     }
+
+    @Test
+    @DisplayName("Test O player winning conditions in row")
+
+    void testOWinInRows() {
+        Board board = new Board(3);
+        for (int col = 0; col < 3; col++) {
+            board.setPlayerAt(new Move(1, col, Player.O));
+        }
+        assertTrue(board.checkWinCondition(Player.O, 3));
+    }
+
+    @Test
+    @DisplayName("Test O player winning conditions in column")
+
+    void testOWinInColumns() {
+        Board board = new Board(3);
+        for (int row = 0; row < 3; row++) {
+            board.setPlayerAt(new Move(row, 2, Player.O));
+        }
+        assertTrue(board.checkWinCondition(Player.O, 3));
+    }
+
+    @Test
+    @DisplayName("Test O player winning conditions in diagonal left to right")
+
+    void testOWinInLeftToRight() {
+        Board board = new Board(3);
+        for (int i = 0; i < 3; i++) {
+            board.setPlayerAt(new Move(i, i, Player.O));
+        }
+        assertTrue(board.checkWinCondition(Player.O, 3));
+    }
+
+    @Test
+    @DisplayName("Test O player winning conditions in diagonal right to left")
+
+    void testOWinInRightToLeft() {
+        Board board = new Board(3);
+        for (int i = 0; i < 3; i++) {
+            board.setPlayerAt(new Move(i, 2 - i, Player.O));
+        }
+        assertTrue(board.checkWinCondition(Player.O, 3));
+    }
+
+    @Test
+    @DisplayName("Test X player winning conditions in row")
+
+    void testXWinInRows() {
+        Board board = new Board(3);
+        for (int col = 0; col < 3; col++) {
+            board.setPlayerAt(new Move(0, col, Player.X));
+        }
+        assertTrue(board.checkWinCondition(Player.X, 3));
+    }
+
+    @Test
+    @DisplayName("Test X player winning conditions in column")
+
+    void testXWinInColumns() {
+        Board board = new Board(3);
+        for (int row = 0; row < 3; row++) {
+            board.setPlayerAt(new Move(row, 1, Player.X));
+        }
+        assertTrue(board.checkWinCondition(Player.X, 3));
+    }
+
+    @Test
+    @DisplayName("Test X player winning conditions in diagonal left to right")
+
+    void testXWinInLeftToRight() {
+        Board board = new Board(3);
+        for (int i = 0; i < 3; i++) {
+            board.setPlayerAt(new Move(i, i, Player.X));
+        }
+        assertTrue(board.checkWinCondition(Player.X, 3));
+    }
+
+    @Test
+    @DisplayName("Test X player winning conditions in diagonal right to left")
+
+    void testXWinInRightToLeft() {
+        Board board = new Board(3);
+        for (int i = 0; i < 3; i++) {
+            board.setPlayerAt(new Move(i, 2 - i, Player.X));
+        }
+        assertTrue(board.checkWinCondition(Player.X, 3));
+    }
+
+    @Test
+    @DisplayName("Test draw")
+
+    void testDrawSituation() {
+        Board board = new Board(3);
+        // X O X
+        // X X O
+        // O X O
+        board.setPlayerAt(new Move(0, 0, Player.X));
+        board.setPlayerAt(new Move(0, 1, Player.O));
+        board.setPlayerAt(new Move(0, 2, Player.X));
+        board.setPlayerAt(new Move(1, 0, Player.O));
+        board.setPlayerAt(new Move(1, 1, Player.X));
+        board.setPlayerAt(new Move(1, 2, Player.X));
+        board.setPlayerAt(new Move(2, 0, Player.O));
+        board.setPlayerAt(new Move(2, 1, Player.X));
+        board.setPlayerAt(new Move(2, 2, Player.O));
+        assertFalse(board.checkWinCondition(Player.X, 3));
+        assertFalse(board.checkWinCondition(Player.O, 3));
+        assertFalse(board.checkIfboardIsNotFull());
+    }
+
+    @Test
+    @DisplayName("Test invalid move throws exception")
+
+    void testInvalidMoveThrowsException() {
+        Board board = new Board(3);
+        board.setPlayerAt(new Move(0, 0, Player.X));
+        Exception exception = assertThrows(IndexOutOfBoundsException.class, () -> {
+            board.setPlayerAt(new Move(3, 3, Player.O));
+        });
+        assertNotNull(exception);
+    }
 }
