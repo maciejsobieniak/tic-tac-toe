@@ -12,26 +12,21 @@ public class GameFx {
 
     private final GameConfig gameConfig;
     private Board board;
-    private final BoardView boardView;
-    private final Label updateInfoGameLabel;
+    private BoardView boardView;
+    private Label updateInfoGameLabel;
 
     public GameFx(GameConfig gameConfig, BoardView boardView, Label updateInfoGameLabel) {
         this.gameConfig = gameConfig;
         this.boardView = boardView;
         this.updateInfoGameLabel = updateInfoGameLabel;
-        resetGame();
     }
 
     public void resetGame() {
         board = new Board(gameConfig.getBoardSize());
         board.setWhoseMove(gameConfig.getStartingPlayer());
         if (gameConfig.gameLoadedStatus()) {
-            try {
-                SaveGame loadedGame = LoadGameEngine.loadGameFromFile("save_game.dat");
-                if (loadedGame == null) {
-                    UserDialogs.showErrorLoadGameConfigMessage();
-                    return;
-                }
+            SaveGame loadedGame = LoadGameEngine.gameLoad("save_game.dat");
+            if (loadedGame != null) {
                 board = LoadGameEngine.loadBoard(loadedGame.getBoard());
                 board.setWhoseMove(loadedGame.getWhoseMove());
                 gameConfig.setGameLoadedStatusToFalse();
@@ -41,9 +36,8 @@ public class GameFx {
                 if (checkIfItIsComputerTurn()) {
                     computerMove();
                 }
-            } catch (Exception e) {
-                UserDialogs.showErrorLoadGameFxMessage(updateInfoGameLabel);
-                gameConfig.setGameLoadedStatusToFalse();
+            } else {
+                UserDialogs.showGameSavedMessageErrorBoardOrGameConfig();
             }
         } else {
             boardView.enableInput();
@@ -116,5 +110,13 @@ public class GameFx {
 
     public String getPlayerName(Player player) {
         return (player == Player.X) ? gameConfig.getPlayer1Name() : gameConfig.getPlayer2Name();
+    }
+
+    public Label setUpdateInfoGameLabel(Label update) {
+        return this.updateInfoGameLabel = update;
+    }
+
+    public BoardView setBoardView(BoardView boardView) {
+        return this.boardView = boardView;
     }
 }

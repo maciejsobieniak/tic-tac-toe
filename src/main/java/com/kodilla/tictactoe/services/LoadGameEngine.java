@@ -3,6 +3,7 @@ package com.kodilla.tictactoe.services;
 import com.kodilla.tictactoe.logic.Board;
 import com.kodilla.tictactoe.logic.Move;
 import com.kodilla.tictactoe.logic.Player;
+import com.kodilla.tictactoe.ui.UserDialogs;
 
 import java.io.*;
 import java.util.List;
@@ -12,6 +13,21 @@ public class LoadGameEngine {
     public static SaveGame loadGameFromFile(String filename) throws IOException, ClassNotFoundException {
         ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename));
         return (SaveGame) ois.readObject();
+    }
+
+    public static SaveGame gameLoad(String filename) {
+        try {
+            SaveGame loadedGame = loadGameFromFile("save_game.dat");
+            if (loadedGame == null) {
+                UserDialogs.showErrorLoadGameConfigMessage();
+                return null;
+            } else {
+                return loadedGame;
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            UserDialogs.showErrorLoadGameConfigMessage();
+        }
+        return null;
     }
 
     public static Board loadBoard(List<List<Player>> boardList) {

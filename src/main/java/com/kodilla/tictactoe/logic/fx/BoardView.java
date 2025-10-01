@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
-public class BoardView  extends GridPane {
+public class BoardView extends GridPane {
 
     private boolean inputEnabled = true;
     private GameFx game;
@@ -49,10 +49,6 @@ public class BoardView  extends GridPane {
 
     public void enableInput() {
         inputEnabled = true;
-    }
-
-    public void setGame(GameFx game) {
-        this.game = game;
     }
 
 }
